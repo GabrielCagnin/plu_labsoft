@@ -1,6 +1,6 @@
 Toda vez que clonar uma nova versao do git, rodar comando antes de rodar o meteor:
 
-meteor npm install 
+	meteor npm install 
 
 Para conectar o banco de dados com o mLab (cloud)
 -- Windowns
