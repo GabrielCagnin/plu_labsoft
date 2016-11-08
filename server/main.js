@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-import { Products } from '../imports/api/products.js';
+import { Products } from '../imports/api/collections.js';
 
 Meteor.startup(() => {
   // code to run on server at startup
@@ -11,7 +11,10 @@ Meteor.startup(() => {
 			return {
 				idProduto: product.idProduto,
 				nome: product.nome,
-				valor: product.valor
+				valor: product.valor,
+				marca: product.marca,
+				categoria: product.categoria,
+				imagem: product.imagem
 			};
 		else
 			return -1;
