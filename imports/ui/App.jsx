@@ -2,9 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
  
-import { Products } from '../api/products.js';
+import { Products } from '../api/collections.js';
+import { Categories } from '../api/collections.js';
 
 import Product from './Product.jsx';
+import Category from './Category.jsx';
  
 // App component - represents the whole app
 export default class App extends Component {
@@ -16,21 +18,31 @@ export default class App extends Component {
     const nome = ReactDOM.findDOMNode(this.refs.nome).value.trim();
     const valor = parseInt(ReactDOM.findDOMNode(this.refs.price).value.trim(), 10);
     const marca = ReactDOM.findDOMNode(this.refs.marca).value.trim();
+	const categoria = ReactDOM.findDOMNode(this.refs.categoria).value.trim();
+	const imagem = ReactDOM.findDOMNode(this.refs.imagem).value.trim();
 
     if(!isNaN(id) && nome.length > 0 && !isNaN(valor) && marca.length > 0)
-      Meteor.call('products.insert', id, nome, valor);
+      Meteor.call('products.insert', id, nome, valor, marca, categoria, imagem);
 
     // Clear form
     ReactDOM.findDOMNode(this.refs.id).value = '';
     ReactDOM.findDOMNode(this.refs.nome).value = '';
     ReactDOM.findDOMNode(this.refs.price).value = '';
     ReactDOM.findDOMNode(this.refs.marca).value = '';
+	ReactDOM.findDOMNode(this.refs.imagem).value = '';
+	
   }
  
   renderProducts() {
     return this.props.products.map((product) => (
       <Product key={product._id} product={product} />
     ));
+  }
+  
+  renderCategories() {
+	return this.props.categories.map((category) => (
+		<Category key={category._id} category={category} />
+	));
   }
  
   render() {
@@ -48,10 +60,9 @@ export default class App extends Component {
               <input ref="marca" className="_input _input-3" placeholder="Marca" type="text" />
               <input ref="price" className="_input _input-4" placeholder="Preço" type="text" />
               <select ref="categoria" className="_select" name="Categoria">
-                <option value="Escolha categoria">Categoria 1</option>
-                <option value="Escolha categoria">Categoria 2</option>
+				{this.renderCategories()}
               </select>
-              <input ref="imagem" className="_input _input-2" placeholder="Escola a imagem" type="text" />
+              <input ref="imagem" className="_input _input-2" placeholder="Escolha a imagem" type="text" />
 
               <input type="submit" value="Cadastrar" className="_button" />
 
@@ -70,12 +81,15 @@ export default class App extends Component {
 
 App.propTypes = {
   products: PropTypes.array.isRequired,
+  categories: PropTypes.array.isRequired,
 };
 
 export default createContainer(() => {
   Meteor.subscribe('products');
+  Meteor.subscribe('categories');
 
   return {
     products: Products.find({}, { sort: { createdAt: -1 } }).fetch(),
+	categories: Categories.find().fetch(),
   };
 }, App);
